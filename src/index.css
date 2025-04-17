@@ -1,2 +1,19 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+	themes: all;
+}
+
+@layer base {
+  @font-face {
+    font-family: 'YourFont';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./assets/Fonts/SpecialGothicExpandedOne-Regular.ttf') format('.ttf');
+  }
+}
+.font-specialgothic {
+  font-family: 'YourFont', sans-serif;
+}
+.active-text{
+    display: block;
+}
