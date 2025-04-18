@@ -10,9 +10,12 @@
     font-weight: 400;
     src: url('./assets/Fonts/SpecialGothicExpandedOne-Regular.ttf') format('.ttf');
   }
-}
-.font-specialgothic {
-  font-family: 'YourFont', sans-serif;
+  .font-specialgothic {
+    font-family: 'YourFont', sans-serif;
+  }
+    .font-handwriting {
+    font-family: 'Dancing Script', cursive;
+  }
 }
 .active-text{
     display: block;

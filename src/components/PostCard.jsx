@@ -1,8 +1,11 @@
 import React from "react";
 
-export default function PostCard() {
+export default function PostCard({dark}) {
 	return (
-		<div className="card card-lg w-full h-fit bg-blue-50 shadow-xl my-5 rounded-2xl">
+		<div
+			className={`card card-lg w-full h-fit ${
+				!dark ? "bg-blue-50" : " bg-gray-700"
+			} shadow-xl my-5 rounded-2xl`}>
 			<div className="card-title flex flex-row justify-between mt-5 ml-3 items-center">
 				<div className="flex items-center gap-3">
 					<div className="avatar">
@@ -38,7 +41,9 @@ export default function PostCard() {
 						</svg>
 					</button>
 					<ul
-						className="dropdown menu w-52 rounded-box bg-blue-50 shadow-sm"
+						className={`dropdown menu w-52 rounded-box ${
+							!dark ? "bg-blue-50" : "bg-gray-700"
+						}  shadow-sm`}
 						popover="auto"
 						id="post-popover"
 						style={{ positionAnchor: "--anchor-post" }}>
@@ -106,25 +111,69 @@ export default function PostCard() {
 						alt=""
 					/>
 				</figure>
-				<div className="card-actions overflow-auto p-0">
+			</div>
+			<div className="flex-col w-full">
+				<div className="flex justify-end mt-2 px-3 gap-3">
+					<p
+						className={`${
+							!dark ? "text-gray-500" : "text-amber-50"
+						} text-sm hover:underline cursor-pointer transition-all duration-1000`}>
+						663 Comments
+					</p>
+					<p
+						className={`${
+							!dark ? "text-gray-500" : "text-amber-50"
+						} text-sm hover:underline cursor-pointer transition-all duration-1000`}>
+						23 Shares
+					</p>
+				</div>
+				<hr className="my-2 opacity-30 px-5" />
+				<div className="card-actions overflow-visible p-0">
 					<div className="flex flex-row w-full object-contain">
-						<button className="btn w-1/3 rounded-l-2xl">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								strokeWidth="2.5"
-								stroke="currentColor"
-								class="size-6">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
-								/>
-							</svg>
-							Like
-						</button>
-						<button className="btn w-1/3">
+						<div className="w-1/3 dropdown dropdown-top dropdown-end">
+							<button
+								className={`w-full btn rounded-l-2xl ${
+									dark ? "hover:bg-amber-50 hover:text-black" : ""
+								}`}>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									strokeWidth="2.5"
+									stroke="currentColor"
+									class="size-6">
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+									/>
+								</svg>
+								Like
+							</button>
+							{/* <ul
+								tabIndex={0}
+								className="dropdown-content flex-row justify-between menu bg-base-100 rounded-box z-1 w-90 p-2 shadow-sm">
+								<li>
+									<a>Item 1</a>
+								</li>
+								<li>
+									<a>Item 2</a>
+								</li>
+								<li>
+									<a>Item 2</a>
+								</li>
+								<li>
+									<a>Item 2</a>
+								</li>
+								<li>
+									<a>Item 2</a>
+								</li>
+							</ul> */}
+						</div>
+						<button
+							className={`btn w-1/3 ${
+								dark ? "hover:bg-amber-50 hover:text-black" : ""
+							}`}>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								fill="none"
@@ -140,7 +189,10 @@ export default function PostCard() {
 							</svg>
 							Comment
 						</button>
-						<button className="btn w-1/3 rounded-r-2xl">
+						<button
+							className={`btn w-1/3 rounded-r-2xl ${
+								dark ? "hover:bg-amber-50 hover:text-black" : ""
+							}`}>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								fill="none"
