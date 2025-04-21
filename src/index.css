@@ -20,3 +20,6 @@
 .active-text{
     display: block;
 }
+select option:disabled:checked {
+  @apply text-gray-400 bg-base-100;
+}
