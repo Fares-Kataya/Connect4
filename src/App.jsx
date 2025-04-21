@@ -12,6 +12,7 @@ import Addpost from "./pages/Addpost";
 function App() {
 	const [darkthemed, setdark] = useState(false);
 	const [isLoggedIn, setLogin] = useState(true);
+	const [activeBlog, setActiveBlog] = useState("Posts");
 	const location = useLocation(); 
 	const isLoginPage =
 		location.pathname === "/login" || location.pathname === "/register";
@@ -26,7 +27,14 @@ function App() {
 				<Routes>
 					<Route
 						path="/"
-						element={<Home login={isLoggedIn} dark={darkthemed} />}
+						element={
+							<Home
+								login={isLoggedIn}
+								dark={darkthemed}
+								activeBlog={activeBlog}
+								setActiveBlog={setActiveBlog}
+							/>
+						}
 					/>
 					<Route
 						path="/login"
@@ -37,7 +45,11 @@ function App() {
 						element={<Register setLogin={setLogin}></Register>}></Route>
 					<Route
 						path="/Add-Post"
-						element={<Addpost></Addpost>}></Route>
+						element={
+							<Addpost
+								activeBlog={activeBlog}
+								setActiveBlog={setActiveBlog}></Addpost>
+						}></Route>
 				</Routes>
 			</div>
 		</div>

@@ -9,7 +9,7 @@ export default function PostCard({dark}) {
 			<div className="card-title flex flex-row justify-between mt-5 ml-3 items-center">
 				<div className="flex items-center gap-3">
 					<div className="avatar">
-						<div className="ring-primary ring-offset-base-100 w-15 rounded-full ring ring-offset-2">
+						<div className="ring-primary ring-offset-base-100 w-12 rounded-full ring ring-offset-2">
 							<img
 								src="https://plus.unsplash.com/premium_photo-1671656349218-5218444643d8?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
 								alt=""
@@ -129,7 +129,7 @@ export default function PostCard({dark}) {
 				</div>
 				<hr className="my-2 opacity-30 px-5" />
 				<div className="card-actions overflow-visible p-0">
-					<div className="flex flex-row w-full object-contain">
+					<div className="flex flex-row w-full object-contain join">
 						<div className="w-1/3 dropdown dropdown-top dropdown-end">
 							<button
 								className={`w-full btn rounded-l-2xl ${
@@ -171,7 +171,7 @@ export default function PostCard({dark}) {
 							</ul> */}
 						</div>
 						<button
-							className={`btn w-1/3 ${
+							className={`btn w-1/3 join-item ${
 								dark ? "hover:bg-amber-50 hover:text-black" : ""
 							}`}>
 							<svg
@@ -190,7 +190,7 @@ export default function PostCard({dark}) {
 							Comment
 						</button>
 						<button
-							className={`btn w-1/3 rounded-r-2xl ${
+							className={`btn w-1/3 rounded-r-2xl join-item ${
 								dark ? "hover:bg-amber-50 hover:text-black" : ""
 							}`}>
 							<svg

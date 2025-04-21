@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Navbar({ login, dark, setdark }) {
 	const navigate = useNavigate();
+	const [activeNav, setActiveNav] = useState("Home");
 	return (
 		<>
 			<div className="navbar bg-base-100 shadow-sm">
@@ -69,8 +70,15 @@ export default function Navbar({ login, dark, setdark }) {
 				<div className="navbar-center flex gap-5">
 					<button
 						className={`btn btn-ghost ${
-							!dark ? "bg-blue-100" : "bg-gray-700"
-						} btn-circle w-20`}>
+							!dark
+								? activeNav === "Home"
+									? "bg-blue-200 w-20 p-1.5"
+									: null
+								: activeNav === "Home"
+								? "bg-gray-800 w-20 p-1.5"
+								: "bg-gray-700"
+						} btn-circle`}
+						onClick={() => setActiveNav("Home")}>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							viewBox="0 0 24 24"
@@ -79,9 +87,19 @@ export default function Navbar({ login, dark, setdark }) {
 							<path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
 							<path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" />
 						</svg>
-						<p className="active-text">Home</p>
+						{activeNav === "Home" ? <p className="active-text">Home</p> : null}
 					</button>
-					<button className="btn btn-ghost btn-circle">
+					<button
+						className={`btn btn-ghost ${
+							!dark
+								? activeNav === "Shorts"
+									? "bg-blue-200 w-20 p-1.5"
+									: null
+								: activeNav === "Shorts"
+								? "bg-gray-800 w-20 p-1.5"
+								: "bg-gray-700"
+						} btn-circle`}
+						onClick={() => setActiveNav("Shorts")}>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							viewBox="0 0 24 24"
@@ -89,8 +107,21 @@ export default function Navbar({ login, dark, setdark }) {
 							class="size-6">
 							<path d="M4.5 4.5a3 3 0 0 0-3 3v9a3 3 0 0 0 3 3h8.25a3 3 0 0 0 3-3v-9a3 3 0 0 0-3-3H4.5ZM19.94 18.75l-2.69-2.69V7.94l2.69-2.69c.944-.945 2.56-.276 2.56 1.06v11.38c0 1.336-1.616 2.005-2.56 1.06Z" />
 						</svg>
+						{activeNav === "Shorts" ? (
+							<p className="active-text">Shorts</p>
+						) : null}
 					</button>
-					<button className="btn btn-ghost btn-circle">
+					<button
+						className={`btn btn-ghost ${
+							!dark
+								? activeNav === "Groups"
+									? "bg-blue-200 w-20 p-1"
+									: null
+								: activeNav === "Groups"
+								? "bg-gray-800 w-20 p-1"
+								: "bg-gray-700"
+						} btn-circle`}
+						onClick={() => setActiveNav("Groups")}>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							viewBox="0 0 24 24"
@@ -103,6 +134,9 @@ export default function Navbar({ login, dark, setdark }) {
 							/>
 							<path d="M5.082 14.254a8.287 8.287 0 0 0-1.308 5.135 9.687 9.687 0 0 1-1.764-.44l-.115-.04a.563.563 0 0 1-.373-.487l-.01-.121a3.75 3.75 0 0 1 3.57-4.047ZM20.226 19.389a8.287 8.287 0 0 0-1.308-5.135 3.75 3.75 0 0 1 3.57 4.047l-.01.121a.563.563 0 0 1-.373.486l-.115.04c-.567.2-1.156.349-1.764.441Z" />
 						</svg>
+						{activeNav === "Groups" ? (
+							<p className="active-text">Groups</p>
+						) : null}
 					</button>
 				</div>
 				<div className="navbar-end gap-2">
