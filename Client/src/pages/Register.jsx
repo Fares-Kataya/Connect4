@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "../components/Input";
 import { useForm } from "react-hook-form";
-export default function Register({setLogin}) {
+export default function Register() {
 	const navigate = useNavigate();
 	const {
 		register,
@@ -28,12 +28,40 @@ export default function Register({setLogin}) {
 	const genderValue = watch("gender", "");
 	const [isPassword, setIsPassword] = useState(false);
 	const [FocusedDOB, setFocusedDOB] = useState(false);
+	const [dispMsg, setdispMsg] = useState("");
 	const onSubmit = async (data) => {
-			console.log("Validated data:", data);
-			// await submitRegistration(data);
-			setLogin(true);
-			navigate("/");
+		const payload = {
+			username:   data.username,
+			email:      data.email,
+			password:   data.password,
+			firstName:  data.firstName,
+			lastName:   data.lastName,
+			birthDate:  data.DOB,
+			gender:     data.gender.toUpperCase(),
 		};
+
+		try {
+			const response = await fetch("http://localhost:4000/auth/register", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(payload),
+				credentials: "include",
+			});
+
+			if (!response.ok) {
+			const { error } = await response.json();
+			throw new Error(error || 'Registration failed');
+			}
+
+			await response.json();
+			console.log(response);
+			navigate('/');
+			setdispMsg("");
+		} catch (err) {
+			console.error(err);
+			setdispMsg(err.toString());
+		}
+	};
 
 	return (
 		<>
@@ -369,8 +397,7 @@ export default function Register({setLogin}) {
 							<div className="flex justify-center items-center">
 								<button
 									type="submit"
-									className="btn btn-wide bg-teal-600 text-white font-semibold hover:bg-teal-500"
-									onClick={() => handleSubmit()}>
+									className="btn btn-wide bg-teal-600 text-white font-semibold hover:bg-teal-500">
 									Continue{" "}
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -389,6 +416,7 @@ export default function Register({setLogin}) {
 									</svg>
 								</button>
 							</div>
+							{dispMsg ? (<div className="flex justify-center"><h4 className="text-sm font-semibold text-red-700">{dispMsg.slice(7)}</h4></div>) : ""}
 						</div>
 					</form>
 					{/* </div> */}

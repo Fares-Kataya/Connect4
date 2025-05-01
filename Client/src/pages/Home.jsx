@@ -46,10 +46,10 @@ export default function Home({ login, dark, activeBlog, setActiveBlog }) {
 								viewBox="0 0 24 24"
 								fill="none"
 								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="lucide lucide-arrow-down-up-icon lucide-arrow-down-up ">
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								className="lucide lucide-arrow-down-up-icon lucide-arrow-down-up ">
 								<path d="m3 16 4 4 4-4" />
 								<path d="M7 20V4" />
 								<path d="m21 8-4-4-4 4" />
@@ -70,10 +70,10 @@ export default function Home({ login, dark, activeBlog, setActiveBlog }) {
 								viewBox="0 0 24 24"
 								fill="none"
 								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="lucide lucide-plus-icon lucide-plus">
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								className="lucide lucide-plus-icon lucide-plus">
 								<path d="M5 12h14" />
 								<path d="M12 5v14" />
 							</svg>

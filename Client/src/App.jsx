@@ -8,12 +8,14 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Addpost from "./pages/Addpost";
+import { useSelector } from "react-redux";
 
 function App() {
 	const [darkthemed, setdark] = useState(false);
-	const [isLoggedIn, setLogin] = useState(true);
 	const [activeBlog, setActiveBlog] = useState("Posts");
 	const location = useLocation(); 
+	const token = useSelector((state) => state.auth.token);
+	const isLoggedIn = Boolean(token);
 	const isLoginPage =
 		location.pathname === "/login" || location.pathname === "/register";
 
@@ -29,7 +31,7 @@ function App() {
 						path="/"
 						element={
 							<Home
-								login={isLoggedIn}
+								login={Boolean(token)}
 								dark={darkthemed}
 								activeBlog={activeBlog}
 								setActiveBlog={setActiveBlog}
@@ -38,11 +40,11 @@ function App() {
 					/>
 					<Route
 						path="/login"
-						element={<Login dark={darkthemed} setLogin={setLogin} />}
+						element={<Login dark={darkthemed} />}
 					/>
 					<Route
 						path="/register"
-						element={<Register setLogin={setLogin}></Register>}></Route>
+						element={<Register></Register>}></Route>
 					<Route
 						path="/Add-Post"
 						element={

@@ -2,13 +2,34 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Input from "../components/Input";
-export default function Login({setLogin}) {
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../Slices/authSlice";
+import { unwrapResult } from "@reduxjs/toolkit";
+
+export default function Login() {
 	const navigate = useNavigate();
 	const [isPassword, setIsPassword] = useState(false);
-	const handleAuth = () => {
-		setLogin(true);
-		navigate("/");
+	const [dispMsg, setdispMsg] = useState("");
+	const dispatch = useDispatch();
+	const { status, error, token } = useSelector((state) => state.auth);
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm();
+	const onSubmit = async (data) => {
+		try {
+			const action = await dispatch(
+				loginUser({ login: data.login, password: data.password })
+			);
+			const jwt = unwrapResult(action);
+			localStorage.setItem("authToken", jwt);
+			navigate("/");
+		} catch (err) {
+			setdispMsg(err);
+		}
 	};
+
 	return (
 		<div className="w-screen h-screen grid grid-cols-[1fr_1fr]">
 			<div className="flex flex-col items-center justify-center bg-gradient-to-b from-teal-600 to-emerald-700 shadow-2xl">
@@ -28,61 +49,80 @@ export default function Login({setLogin}) {
 				<h2 className="text-5xl font-bold p-3 text-teal-600 card-title mb-5">
 					Sign in to Connect4
 				</h2>
-				<Input
-					type={"Username"}
-					svg={{
-						xmlns: "http://www.w3.org/2000/svg",
-						d: "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2",
-						cx: 12,
-						cy: 7,
-						r: 4,
-					}}
-					placeholder={"Username"}></Input>
-				<Input
-					type={"password"}
-					svg={{
-						xmlns: "http://www.w3.org/2000/svg",
-						d: "M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z",
-						cx: 16.5,
-						cy: 7.5,
-						r: 0.5,
-					}}
-					placeholder={"••••••••"}
-					isPassword={isPassword}
-					setIsPassword={setIsPassword}></Input>
-				{/* <div className="card-actions justify-end mt-2"> */}
-				<div className="flex flex-row mt-2 gap-5">
-					<label className="label text-sm">
-						<input
-							type="checkbox"
-							className="checkbox checkbox-sm border-[#009689] checked:bg-[#009689] checked:text-white checked:border-2 checked:border-black"
-						/>
-						Remember me
-					</label>
-					<a className="link text-sm font-medium text-teal-600 hover:text-teal-500">
-						Forgot Password?
-					</a>
-				</div>
-				<button
-					className="btn btn-wide bg-teal-600 text-white font-semibold hover:bg-teal-500"
-					onClick={() => handleAuth()}>
-					Login{" "}
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="24"
-						height="24"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="ml-1 size-5 lucide lucide-arrow-right-to-line-icon lucide-arrow-right-to-line">
-						<path d="M17 12H3" />
-						<path d="m11 18 6-6-6-6" />
-						<path d="M21 5v14" />
-					</svg>
-				</button>
+				<form
+					className="w-full flex flex-col gap-5 justify-center items-center animate"
+					onSubmit={handleSubmit(onSubmit)}>
+					<Input
+						type={"username"}
+						svg={{
+							xmlns: "http://www.w3.org/2000/svg",
+							d: "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2",
+							cx: 12,
+							cy: 7,
+							r: 4,
+						}}
+						placeholder="Email or Username"
+						validation={register("login", {
+							required: "Please enter email or username",
+						})}></Input>
+					<Input
+						type="password"
+						svg={{
+							xmlns: "http://www.w3.org/2000/svg",
+							d: "M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z",
+							cx: 16.5,
+							cy: 7.5,
+							r: 0.5,
+						}}
+						placeholder={"••••••••"}
+						validation={register("password", {
+							required: "Password is required",
+						})}
+						isPassword={isPassword}
+						setIsPassword={setIsPassword}></Input>
+					{/* <div className="card-actions justify-end mt-2"> */}
+					<div className="flex flex-row mt-2 gap-5">
+						<label className="label text-sm">
+							<input
+								type="checkbox"
+								className="checkbox checkbox-sm border-[#009689] checked:bg-[#009689] checked:text-white checked:border-2 checked:border-black"
+							/>
+							Remember me
+						</label>
+						<a className="link text-sm font-medium text-teal-600 hover:text-teal-500">
+							Forgot Password?
+						</a>
+					</div>
+					<button
+						className="btn btn-wide bg-teal-600 text-white font-semibold hover:bg-teal-500"
+						type="submit">
+						{status === "loading" ? "Logging in…" : "Login"}
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="ml-1 size-5 lucide lucide-arrow-right-to-line-icon lucide-arrow-right-to-line">
+							<path d="M17 12H3" />
+							<path d="m11 18 6-6-6-6" />
+							<path d="M21 5v14" />
+						</svg>
+					</button>
+					{dispMsg ? (
+						<div className="flex justify-center">
+							<h4 className="text-sm font-semibold text-red-700">
+								{dispMsg.slice(7)}
+							</h4>
+						</div>
+					) : (
+						""
+					)}
+				</form>
 				{/* </div> */}
 				<div className="divider">Or Continue With</div>
 				<div className="flex flex-row gap-2">
