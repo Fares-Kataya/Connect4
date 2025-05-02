@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { jwtDecode } from "jwt-decode";
 
+// Thunk to log in and store token, then fetch profile
 export const loginUser = createAsyncThunk(
 	"auth/loginUser",
 	async (credentials, thunkAPI) => {
@@ -11,12 +11,28 @@ export const loginUser = createAsyncThunk(
 		});
 		const data = await res.json();
 		if (!res.ok) return thunkAPI.rejectWithValue(data.error);
+		localStorage.setItem("authToken", data.token);
+		thunkAPI.dispatch(fetchCurrentUser());
 		return data.token;
 	}
 );
 
+// Thunk to fetch current user profile
+export const fetchCurrentUser = createAsyncThunk(
+	"auth/fetchCurrentUser",
+	async (_, thunkAPI) => {
+		const token = thunkAPI.getState().auth.token;
+		const res = await fetch("http://localhost:4000/auth/me", {
+			headers: { Authorization: `Bearer ${token}` },
+		});
+		const data = await res.json();
+		if (!res.ok) return thunkAPI.rejectWithValue(data.error);
+		return data.user;
+	}
+);
+
 const initialState = {
-	token: null,
+	token: localStorage.getItem("authToken"), // seed from localStorage
 	user: null,
 	status: "idle",
 	error: null,
@@ -31,10 +47,12 @@ const authSlice = createSlice({
 			state.user = null;
 			state.status = "idle";
 			state.error = null;
+			localStorage.removeItem("authToken");
 		},
 	},
 	extraReducers: (builder) => {
 		builder
+			// loginUser
 			.addCase(loginUser.pending, (state) => {
 				state.status = "loading";
 				state.error = null;
@@ -42,9 +60,22 @@ const authSlice = createSlice({
 			.addCase(loginUser.fulfilled, (state, action) => {
 				state.status = "succeeded";
 				state.token = action.payload;
-				state.user = jwtDecode(action.payload);
 			})
 			.addCase(loginUser.rejected, (state, action) => {
+				state.status = "failed";
+				state.error = action.payload || action.error.message;
+			})
+
+			// fetchCurrentUser
+			.addCase(fetchCurrentUser.pending, (state) => {
+				state.status = "loading";
+				state.error = null;
+			})
+			.addCase(fetchCurrentUser.fulfilled, (state, action) => {
+				state.status = "succeeded";
+				state.user = action.payload;
+			})
+			.addCase(fetchCurrentUser.rejected, (state, action) => {
 				state.status = "failed";
 				state.error = action.payload || action.error.message;
 			});

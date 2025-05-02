@@ -1,9 +1,24 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../Slices/authSlice";
 
-export default function Navbar({ login, dark, setdark }) {
+export default function Navbar({ dark, setdark }) {
 	const navigate = useNavigate();
 	const [activeNav, setActiveNav] = useState("Home");
+	const user = useSelector((state) => state.auth.user);
+	 const dispatch = useDispatch();
+	
+	const returnHome = () => {
+		navigate("/");
+	};
+	const Home = () => {
+		setActiveNav("Home");
+		navigate("/");
+	}
+	const handleLogout = () => {
+		dispatch(logout());
+	};
 	return (
 		<>
 			<div className="navbar bg-base-100 shadow-sm">
@@ -53,7 +68,9 @@ export default function Navbar({ login, dark, setdark }) {
 						</div>
 					</div>
 					<div>
-						<a className="btn btn-ghost text-3xl font-specialgothic">
+						<a
+							className="btn btn-ghost text-3xl font-specialgothic"
+							onClick={() => returnHome()}>
 							<img
 								src={`${
 									dark
@@ -72,13 +89,13 @@ export default function Navbar({ login, dark, setdark }) {
 						className={`btn btn-ghost ${
 							!dark
 								? activeNav === "Home"
-									? "bg-blue-200 w-20 p-1.5"
+									? "bg-teal-600 w-20 p-1.5 text-white"
 									: null
 								: activeNav === "Home"
 								? "bg-gray-800 w-20 p-1.5"
 								: "bg-gray-700"
 						} btn-circle`}
-						onClick={() => setActiveNav("Home")}>
+						onClick={() => Home()}>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							viewBox="0 0 24 24"
@@ -93,7 +110,7 @@ export default function Navbar({ login, dark, setdark }) {
 						className={`btn btn-ghost ${
 							!dark
 								? activeNav === "Shorts"
-									? "bg-blue-200 w-20 p-1.5"
+									? "bg-teal-600 w-20 p-1.5 text-white"
 									: null
 								: activeNav === "Shorts"
 								? "bg-gray-800 w-20 p-1.5"
@@ -115,7 +132,7 @@ export default function Navbar({ login, dark, setdark }) {
 						className={`btn btn-ghost ${
 							!dark
 								? activeNav === "Groups"
-									? "bg-blue-200 w-20 p-1"
+									? "bg-teal-600 w-20 p-1 text-white"
 									: null
 								: activeNav === "Groups"
 								? "bg-gray-800 w-20 p-1"
@@ -174,7 +191,7 @@ export default function Navbar({ login, dark, setdark }) {
 									clipRule="evenodd"
 								/>
 							</svg>
-							<span className="badge badge-xs badge-primary indicator-item">
+							<span className="badge badge-xs badge-primary bg-teal-600 border-teal-600 indicator-item">
 								2
 							</span>
 						</div>
@@ -195,7 +212,7 @@ export default function Navbar({ login, dark, setdark }) {
 									d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
 								/>{" "}
 							</svg>
-							<span className="badge badge-xs badge-primary indicator-item">
+							<span className="badge badge-xs badge-primary bg-teal-600 border-teal-600 indicator-item">
 								5
 							</span>
 						</div>
@@ -225,28 +242,37 @@ export default function Navbar({ login, dark, setdark }) {
 							<path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
 						</svg>
 					</label>
-					{login ? (
+					{user ? (
 						<div className="dropdown dropdown-end">
 							<div
 								tabIndex={0}
 								role="button"
 								className="btn btn-ghost btn-circle avatar w-full">
 								<div className="w-8 rounded-full">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										strokeWidth="1.5"
-										stroke="currentColor"
-										className="size-8">
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-										/>
-									</svg>
+									{user.photoUrl ? (
+										<img
+											src={user.photoUrl}
+											alt="Avatar"
+											className="w-8 rounded-full"></img>
+									) : (
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth="1.5"
+											stroke="currentColor"
+											className="size-8">
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+											/>
+										</svg>
+									)}
 								</div>
-								<p>Fares Kataya</p>
+								<p>
+									{user.firstName} {user.lastName}
+								</p>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									viewBox="0 0 24 24"
@@ -269,7 +295,7 @@ export default function Navbar({ login, dark, setdark }) {
 									<a>Settings</a>
 								</li>
 								<li>
-									<a>Logout</a>
+									<a onClick={handleLogout}>Logout</a>
 								</li>
 							</ul>
 						</div>

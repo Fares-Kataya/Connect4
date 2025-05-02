@@ -13,8 +13,10 @@ async function register(req, res, next) {
 			lastName,
 			birthDate,
 			gender,
-        } = req.body;
+		} = req.body;
+
 		const hash = await bcrypt.hash(password, 10);
+
 		const user = await prisma.user.create({
 			data: {
 				username,
@@ -26,7 +28,8 @@ async function register(req, res, next) {
 				gender,
 			},
 		});
-		res.status(201).json({
+
+		return res.status(201).json({
 			id: user.id,
 			username: user.username,
 			email: user.email,
@@ -36,7 +39,12 @@ async function register(req, res, next) {
 			gender: user.gender,
 		});
 	} catch (err) {
-		if (err.code === "P2002") {
+		if (
+			err.code === "P2002" &&
+			err.meta?.target?.some(
+				(t) => t.includes("username") || t.includes("email")
+			)
+		) {
 			return res
 				.status(409)
 				.json({ error: "Username or email already exists" });
@@ -47,20 +55,26 @@ async function register(req, res, next) {
 
 async function login(req, res, next) {
 	try {
-        const { login, password } = req.body;
-        let user = await prisma.user.findUnique({ where: { email: login } });
-        if (!user) {
-					user = await prisma.user.findUnique({ where: { username: login } });
-        }
-		if (!user) return res.status(401).json({ error: "Invalid credentials" });
+		const { login, password } = req.body;
+
+		let user = await prisma.user.findUnique({ where: { email: login } });
+		if (!user) {
+			user = await prisma.user.findUnique({ where: { username: login } });
+		}
+		if (!user) {
+			return res.status(401).json({ error: "Invalid credentials" });
+		}
 
 		const valid = await bcrypt.compare(password, user.passwordHash);
-		if (!valid) return res.status(401).json({ error: "Invalid credentials" });
+		if (!valid) {
+			return res.status(401).json({ error: "Invalid credentials" });
+		}
 
-		const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: "1h" });
+		const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: "10h" });
 		res.json({ token });
 	} catch (err) {
 		next(err);
 	}
 }
+
 module.exports = { register, login };

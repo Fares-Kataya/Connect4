@@ -61,7 +61,7 @@ export default function PrivacySelector({ level, setLevel }) {
 			<div
 				tabIndex={0}
 				role="button"
-				className="btn btn-xs text-gray-600 btn-block px-3 flex items-center justify-start">
+				className="btn btn-xs text-gray-600 btn-block px-3 flex items-center justify-start bg-teal-50 w-20">
 				{icons[level]}
 				{level}
 			</div>

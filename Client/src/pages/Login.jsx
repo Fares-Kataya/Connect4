@@ -29,7 +29,7 @@ export default function Login() {
 			setdispMsg(err);
 		}
 	};
-
+	console.log(localStorage);
 	return (
 		<div className="w-screen h-screen grid grid-cols-[1fr_1fr]">
 			<div className="flex flex-col items-center justify-center bg-gradient-to-b from-teal-600 to-emerald-700 shadow-2xl">
@@ -116,7 +116,7 @@ export default function Login() {
 					{dispMsg ? (
 						<div className="flex justify-center">
 							<h4 className="text-sm font-semibold text-red-700">
-								{dispMsg.slice(7)}
+								{dispMsg}
 							</h4>
 						</div>
 					) : (

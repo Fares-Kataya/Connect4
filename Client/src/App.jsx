@@ -8,17 +8,24 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Addpost from "./pages/Addpost";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCurrentUser } from "./Slices/authSlice";
 
 function App() {
 	const [darkthemed, setdark] = useState(false);
 	const [activeBlog, setActiveBlog] = useState("Posts");
-	const location = useLocation(); 
+	const location = useLocation();
+	const dispatch = useDispatch();
 	const token = useSelector((state) => state.auth.token);
 	const isLoggedIn = Boolean(token);
 	const isLoginPage =
 		location.pathname === "/login" || location.pathname === "/register";
 
+	useEffect(() => {
+		if (token) {
+			dispatch(fetchCurrentUser());
+		}
+	}, [token, dispatch]);
 	return (
 		<div className="app-wrapper">
 			{!isLoginPage && (
@@ -31,7 +38,6 @@ function App() {
 						path="/"
 						element={
 							<Home
-								login={Boolean(token)}
 								dark={darkthemed}
 								activeBlog={activeBlog}
 								setActiveBlog={setActiveBlog}

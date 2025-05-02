@@ -10,8 +10,8 @@ export default function BlogTypeToggle({ activeBlog, setActiveBlog }) {
 						idx === 0 ? "l" : "r"
 					}-lg w-1/2 join-item ${
 						activeBlog === type
-							? "btn-active bg-blue-200 text-blue-800"
-							: "bg-blue-50 hover:bg-blue-100"
+							? "btn-active bg-teal-600 text-white"
+							: "bg-teal-50 hover:bg-teal-100"
 					}`}
 					onClick={() => setActiveBlog(type)}>
 					{type.slice(0, -1)}

@@ -24,7 +24,9 @@ app.use(
 );
 app.use("/auth", require("./routes/authRoutes"));
 const authRouter = require("./routes/authRoutes");
+const postRouter = require("./routes/postRoutes");
 app.use("/auth", authRouter);
+app.use("/posts", postRouter);
 
 // A simple health-check / root route
 app.get("/", (req, res) => {

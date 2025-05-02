@@ -27,6 +27,11 @@ enum Gender {
   FEMALE
 }
 
+enum PostType {
+  POST
+  ARTICLE
+}
+
 model Post {
   id        Int      @id @default(autoincrement())
   userId    Int
@@ -34,6 +39,7 @@ model Post {
   title     String
   body      String
   imageUrl  String?
+  type      PostType  @default(POST)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

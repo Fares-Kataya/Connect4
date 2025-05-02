@@ -1,4 +1,3 @@
-// components/MediaActions.jsx
 import React from "react";
 
 export default function MediaActions({ fileInputRef }) {
@@ -132,15 +131,8 @@ export default function MediaActions({ fileInputRef }) {
 				{actions.slice(0, 2).map((item, i) => (
 					<button
 						key={i}
-						className="btn join-item btn-ghost btn-circle relative overflow-hidden cursor-pointer">
-						{item.type === "file" && (
-							<input
-								type="file"
-								accept={item.accept}
-								ref={fileInputRef}
-								className="absolute inset-0 top-2 w-full h-full opacity-0 cursor-pointer"
-							/>
-						)}
+						className="btn join-item btn-ghost btn-circle"
+						onClick={() => fileInputRef.current.click()}>
 						{item.svg}
 					</button>
 				))}

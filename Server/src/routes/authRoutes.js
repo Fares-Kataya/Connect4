@@ -19,7 +19,7 @@ router.get("/me", authenticate, async (req, res, next) => {
 				email: true,
 				firstName: true,
 				lastName: true,
-				avatarUrl: true,
+				PhotoUrl: true,
 				birthDate: true,
 				gender: true,
 			},

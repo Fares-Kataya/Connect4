@@ -55,7 +55,7 @@ export default function Register() {
 
 			await response.json();
 			console.log(response);
-			navigate('/');
+			navigate('/login');
 			setdispMsg("");
 		} catch (err) {
 			console.error(err);
