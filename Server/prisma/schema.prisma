@@ -45,16 +45,3 @@ model Post {
 
   @@index([userId])
 }
-
-model Relationship {
-  relationship_id      String   @id @default(uuid())
-  follower_id          String
-  following_id         String
-  relationship_status  String   @default("following")
-  created_at           DateTime @default(now())
-
-  follower   User @relation(fields: [follower_id], references: [user_id], onDelete: Cascade)
-  following  User @relation(fields: [following_id], references: [user_id], onDelete: Cascade)
-
-  @@unique([follower_id, following_id])
-}
