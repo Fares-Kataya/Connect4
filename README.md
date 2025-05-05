@@ -96,4 +96,6 @@ The project uses a concurrent development setup where both client and server run
 
 - Client development server: `npm run dev:client`  
 - Server development server: `npm run dev:server`  
-- Both together: `npm run dev`  
+- Both together: `npm run dev`
+
+[Demo Video Link ](https://drive.google.com/file/d/1wZPPdcqk2-RIvHueLDZVGEpZvyUwZWVo/view?usp=sharing)
