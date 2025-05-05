@@ -17,6 +17,10 @@ export default function Home({ dark, activeBlog, setActiveBlog }) {
 	const token = useSelector((state) => state.auth.token);
 	const [posts, setPosts] = useState([]);
 	const [Loading, setLoading] = useState(false);
+	const [hasMore, setHasMore] = useState(true);
+	const [page, setPage] = useState(1);
+	const [loadingMore, setLoadingMore] = useState(false);
+	const postsPerPage = 2;
 	const handleAdd = () => {
 		navigate("/Add-Post");
 	};
@@ -38,35 +42,90 @@ const handleDelete = async (postId) => {
 		alert("Could not delete post.");
 	}
 };
+
 	useEffect(() => {
-		if (!login && dialogRef.current) {
+		if ((!login || location.state?.showLoginModal) && dialogRef.current)
+    	{
 		dialogRef.current.showModal();
 		}
 	}, [login]);
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
+useEffect(() => {
+	return () => {
+		window.allPosts = undefined;
+	};
+}, []);
 useEffect(() => {
 	if (location.pathname === "/") {
 		setLoading(true);
-
-		const fetchData = async () => {
-			try {
-				const [response] = await Promise.all([
-					axios.get("http://localhost:4000/posts"),
-					delay(2000),
-				]);
-				setPosts(response.data);
-			} catch (err) {
-				console.error(err);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchData();
+		fetchInitialPosts();
 	}
 }, [location.pathname]);
-	console.log(posts)
+const fetchInitialPosts = async () => {
+	try {
+		const totalCountResponse = await axios.head("http://localhost:4000/posts");
+		const totalCount = parseInt(
+			totalCountResponse.headers["x-total-count"] || "0"
+		);
+
+		const [response] = await Promise.all([
+			axios.get(`http://localhost:4000/posts?_page=1&_limit=${postsPerPage}`),
+			delay(1000),
+		]);
+		const responseData = response.data;
+		if (responseData.length > postsPerPage) {
+			setPosts(responseData.slice(0, postsPerPage));
+			window.allPosts = responseData;
+			setHasMore(postsPerPage < responseData.length);
+		} else {
+			setPosts(responseData);
+			setHasMore(
+				responseData.length === postsPerPage && responseData.length < totalCount
+			);
+		}
+
+		setPage(2);
+	} catch (err) {
+		console.error("Failed to fetch initial posts:", err);
+	} finally {
+		setLoading(false);
+	}
+	};
+const fetchMorePosts = async () => {
+	setLoadingMore(true);
+	await delay(800);
+	if (window.allPosts) {
+		const start = (page - 1) * postsPerPage;
+		const end = page * postsPerPage;
+		const nextBatch = window.allPosts.slice(start, end);
+
+		if (nextBatch.length > 0) {
+			setPosts((prevPosts) => [...prevPosts, ...nextBatch]);
+			setPage(page + 1);
+			setHasMore(end < window.allPosts.length);
+		} else {
+			setHasMore(false);
+		}
+
+		setLoadingMore(false);
+		return;
+	}
+	try {
+		const response = await axios.get(
+			`http://localhost:4000/posts?_page=${page}&_limit=${postsPerPage}`
+		);
+	if (response.data.length < postsPerPage) {
+			setHasMore(false);
+		}
+		setPosts((prevPosts) => [...prevPosts, ...response.data]);
+		setPage(page + 1);
+	} catch (err) {
+		console.error("Failed to fetch more posts:", err);
+		setHasMore(false);
+	} finally {
+		setLoadingMore(false);
+	}
+};
 	return (
 		<>
 			{login ? (
@@ -107,14 +166,35 @@ useEffect(() => {
 							</div>
 							{posts.length > 0 ? (
 								<>
-									{posts.map((p) => (
-										<PostCard
-											key={p.id}
-											post={p}
-											dark={dark}
-											onDelete={() => handleDelete(p.id)}
-										/>
-									))}
+									<InfiniteScroll
+										dataLength={posts.length}
+										next={fetchMorePosts}
+										hasMore={hasMore}
+										loader={
+											<div className="flex flex-col items-center my-6">
+												<div className="loading loading-spinner loading-md text-teal-600"></div>
+												<p className="text-sm text-gray-500 mt-2">
+													Loading more posts...
+												</p>
+											</div>
+										}
+										scrollThreshold={0.8}
+										scrollableTarget="scrollableDiv"
+										endMessage={
+											<p className="text-center mt-4 mb-4 text-gray-500">
+												No more posts to load
+											</p>
+										}>
+										{posts.map((p) => (
+											<PostCard
+												key={p.id}
+												post={p}
+												dark={dark}
+												onDelete={() => handleDelete(p.id)}
+											/>
+										))}
+									</InfiniteScroll>
+
 									<button
 										className="btn btn-circle fixed left-1/2 absolute left-255 bottom-130 bg-teal-50 hover:bg-teal-100"
 										onClick={handleAdd}>
@@ -195,7 +275,6 @@ useEffect(() => {
 									</div>
 								</div>
 							</div>
-							
 						</div>
 					</div>
 				</div>
