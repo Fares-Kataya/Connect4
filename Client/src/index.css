@@ -23,3 +23,7 @@
 select option:disabled:checked {
   @apply text-gray-400 bg-base-100;
 }
+.scrollable-no-bar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

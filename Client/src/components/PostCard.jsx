@@ -13,7 +13,7 @@ export default function PostCard({ key, post, dark, onDelete }) {
 	return (
 		<div
 			className={`card card-lg w-full h-fit ${
-				!dark ? "bg-teal-50" : " bg-gray-700"
+				!dark ? "bg-white" : " bg-gray-700"
 			} shadow-xl my-5 rounded-2xl`}>
 			<div className="card-title flex flex-row justify-between mt-5 ml-3 items-center">
 				<div className="flex items-center gap-3">

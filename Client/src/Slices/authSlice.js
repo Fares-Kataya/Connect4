@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// Thunk to log in and store token, then fetch profile
 export const loginUser = createAsyncThunk(
 	"auth/loginUser",
 	async (credentials, thunkAPI) => {
@@ -17,7 +16,6 @@ export const loginUser = createAsyncThunk(
 	}
 );
 
-// Thunk to fetch current user profile
 export const fetchCurrentUser = createAsyncThunk(
 	"auth/fetchCurrentUser",
 	async (_, thunkAPI) => {
@@ -32,7 +30,7 @@ export const fetchCurrentUser = createAsyncThunk(
 );
 
 const initialState = {
-	token: localStorage.getItem("authToken"), // seed from localStorage
+	token: localStorage.getItem("authToken"),
 	user: null,
 	status: "idle",
 	error: null,
@@ -52,7 +50,6 @@ const authSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			// loginUser
 			.addCase(loginUser.pending, (state) => {
 				state.status = "loading";
 				state.error = null;
@@ -66,7 +63,6 @@ const authSlice = createSlice({
 				state.error = action.payload || action.error.message;
 			})
 
-			// fetchCurrentUser
 			.addCase(fetchCurrentUser.pending, (state) => {
 				state.status = "loading";
 				state.error = null;

@@ -3,7 +3,7 @@ const Joi = require("joi");
 const registerSchema = Joi.object({
 	firstName: Joi.string().min(1).max(30).required(),
 	lastName: Joi.string().min(1).max(30).required(),
-	birthDate: Joi.date().iso().required(), // match your backend field
+	birthDate: Joi.date().iso().required(),
 	gender: Joi.string().valid("MALE", "FEMALE").required(),
 	username: Joi.string().alphanum().min(3).max(20).required(),
 	email: Joi.string().email().required(),

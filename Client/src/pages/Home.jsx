@@ -9,12 +9,15 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import PostSkeleton from "../components/PostSkeleton";
 import InfiniteScroll from "react-infinite-scroll-component";
+// import { ConnectionCard } from "../components/connectionCard";
 
 export default function Home({ dark, activeBlog, setActiveBlog }) {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const login = useSelector((state) => Boolean(state.auth.token));
 	const token = useSelector((state) => state.auth.token);
+	const currentUser = useSelector((s) => s.auth.user);
+	const [users, setUsers] = useState([]);
 	const [posts, setPosts] = useState([]);
 	const [Loading, setLoading] = useState(false);
 	const [hasMore, setHasMore] = useState(true);
@@ -125,12 +128,44 @@ const fetchMorePosts = async () => {
 	} finally {
 		setLoadingMore(false);
 	}
-};
+	};
+	 useEffect(() => {
+			if (!token) return;
+			(async () => {
+				try {
+					const { data } = await axios.get("http://localhost:4000/users", {
+						headers: { Authorization: `Bearer ${token}` },
+					});
+					setUsers(data.filter((u) => u.id !== currentUser.id));
+				} catch (err) {
+					console.error("Failed to fetch users:", err);
+				}
+			})();
+		}, [token, currentUser]);
 	return (
 		<>
 			{login ? (
-				<div className="grid grid-cols-3 h-screen w-screen-100">
-					<div className="mt-10"></div>
+				<div
+					className={`grid grid-cols-3 h-screen overflow-auto w-screen-100 ${
+						!dark && "bg-gray-100"
+					}`}>
+					<div className="mt-10">
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+							{/* {users.map((user) => (
+								<ConnectionCard
+									key={user.id}
+									user={user}
+									onConnect={(userId) =>
+										console.log(`Connect with user ${userId}`)
+									}
+									onMessage={(userId) => console.log(`Message user ${userId}`)}
+									onViewProfile={(userId) =>
+										console.log(`View profile of user ${userId}`)
+									}
+								/>
+							))} */}
+						</div>
+					</div>
 					{Loading ? (
 						<div className="flex flex-col">
 							{[1, 2, 3].map((n) => (
@@ -139,11 +174,11 @@ const fetchMorePosts = async () => {
 						</div>
 					) : (
 						<div className="mt-10">
-							{[1, 2, 3, 5, 6, 7, 8, 9].map((n) => (
+							{/* {[1, 2, 3, 5, 6, 7, 8, 9].map((n) => (
 								<Story key={n} />
-							))}
+							))} */}
 
-							<div className="divider divider-end">
+							<div className="divider divider-end mb-0">
 								<button className="btn btn-xs text-xs font-bold bg-teal-50">
 									Sort By{" "}
 									<svg
@@ -165,36 +200,40 @@ const fetchMorePosts = async () => {
 								</button>
 							</div>
 							{posts.length > 0 ? (
-								<>
-									<InfiniteScroll
-										dataLength={posts.length}
-										next={fetchMorePosts}
-										hasMore={hasMore}
-										loader={
-											<div className="flex flex-col items-center my-6">
-												<div className="loading loading-spinner loading-md text-teal-600"></div>
-												<p className="text-sm text-gray-500 mt-2">
-													Loading more posts...
+								<div>
+									<div
+										id="scrollableDiv"
+										className="scrollable-no-bar"
+										style={{ height: "80vh", overflowY: "auto" }}>
+										<InfiniteScroll
+											dataLength={posts.length}
+											next={fetchMorePosts}
+											hasMore={hasMore}
+											loader={
+												<div className="flex flex-col items-center my-6">
+													<div className="loading loading-spinner loading-md text-teal-600"></div>
+													<p className="text-sm text-gray-500 mt-2">
+														Loading more posts...
+													</p>
+												</div>
+											}
+											scrollThreshold={0.8}
+											scrollableTarget="scrollableDiv"
+											endMessage={
+												<p className="text-center mt-4 mb-4 text-gray-500">
+													No more posts to load
 												</p>
-											</div>
-										}
-										scrollThreshold={0.8}
-										scrollableTarget="scrollableDiv"
-										endMessage={
-											<p className="text-center mt-4 mb-4 text-gray-500">
-												No more posts to load
-											</p>
-										}>
-										{posts.map((p) => (
-											<PostCard
-												key={p.id}
-												post={p}
-												dark={dark}
-												onDelete={() => handleDelete(p.id)}
-											/>
-										))}
-									</InfiniteScroll>
-
+											}>
+											{posts.map((p) => (
+												<PostCard
+													key={p.id}
+													post={p}
+													dark={dark}
+													onDelete={() => handleDelete(p.id)}
+												/>
+											))}
+										</InfiniteScroll>
+									</div>
 									<button
 										className="btn btn-circle fixed left-1/2 absolute left-255 bottom-130 bg-teal-50 hover:bg-teal-100"
 										onClick={handleAdd}>
@@ -213,7 +252,7 @@ const fetchMorePosts = async () => {
 											<path d="M12 5v14" />
 										</svg>
 									</button>
-								</>
+								</div>
 							) : (
 								<div className="grid gap-5 justify-center text-2xl font-semibold">
 									<p>There are no posts yet</p>
@@ -229,53 +268,57 @@ const fetchMorePosts = async () => {
 
 					<div className="flex flex-col relative left-15 h-100 bottom-15 w-80 mt-20 ">
 						<h2 className="card-title text-3xl">Articles</h2>
-						<div className="overflow-scroll w-100 h-100 bg-teal-50">
-							<div className="card bg-base-100 w-96 shadow-sm h-100 bg-teal-50">
-								<figure>
-									<img
-										src="https://miro.medium.com/v2/resize:fit:1100/format:webp/0*3rpD-4OikxmCYusJ"
-										alt="Shoes"
-									/>
-								</figure>
-								<div className="card-body">
-									<h2 className="card-title font-bold">
-										This Is How Tesla Will Die
-									</h2>
+						{Loading ? (
+							<PostSkeleton />
+						) : (
+							<div className="overflow-y-scroll rounded-2xl w-100 h-100 bg-white">
+								<div className="card bg-base-100 w-96 shadow-sm h-100 bg-white">
+									<figure>
+										<img
+											src="https://miro.medium.com/v2/resize:fit:1100/format:webp/0*3rpD-4OikxmCYusJ"
+											alt="Shoes"
+										/>
+									</figure>
+									<div className="card-body">
+										<h2 className="card-title font-bold">
+											This Is How Tesla Will Die
+										</h2>
 
-									<p>The vultures are circling the tech giant.</p>
-									<div className="card-actions justify-end">
-										<button className="btn bg-teal-600 text-white">
-											Read More
-										</button>
+										<p>The vultures are circling the tech giant.</p>
+										<div className="card-actions justify-end">
+											<button className="btn bg-teal-600 text-white">
+												Read More
+											</button>
+										</div>
+									</div>
+								</div>
+								<div className="card bg-base-100 w-96 shadow-sm h-100 bg-white">
+									<figure>
+										<img
+											src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfBKCTVF_Q3P8p9hHPaxZlSlr1QCJ_f8fKbg&s"
+											alt="Shoes"
+										/>
+									</figure>
+									<div className="card-body">
+										<h2 className="card-title font-bold">
+											A tariff loophole has expired, ringing alarms across
+											social media
+										</h2>
+
+										<p>
+											Trump’s crackdown on Chinese imports has now ended a key
+											shipping exemption — and millions of Americans will soon
+											feel the impact
+										</p>
+										<div className="card-actions justify-end">
+											<button className="btn bg-teal-600 text-white">
+												Read More
+											</button>
+										</div>
 									</div>
 								</div>
 							</div>
-							<div className="card bg-base-100 w-96 shadow-sm h-100 bg-teal-50">
-								<figure>
-									<img
-										src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfBKCTVF_Q3P8p9hHPaxZlSlr1QCJ_f8fKbg&s"
-										alt="Shoes"
-									/>
-								</figure>
-								<div className="card-body">
-									<h2 className="card-title font-bold">
-										A tariff loophole has expired, ringing alarms across social
-										media
-									</h2>
-
-									<p>
-										Trump’s crackdown on Chinese imports has now ended a key
-										shipping exemption — and millions of Americans will soon
-										feel the impact
-									</p>
-									<div className="card-actions justify-end">
-										<button className="btn bg-teal-600 text-white">
-											Read More
-										</button>
-									</div>
-								</div>
-							</div>
-						</div>
+						)}
 					</div>
 				</div>
 			) : (
