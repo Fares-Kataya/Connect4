@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import PostSkeleton from "../components/PostSkeleton";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 export default function Home({ dark, activeBlog, setActiveBlog }) {
 	const navigate = useNavigate();
@@ -24,7 +26,7 @@ const handleDelete = async (postId) => {
 	try {
 		await fetch(`http://localhost:4000/posts/${postId}`, {
 			method: "DELETE",
-			headers: { Authorization: `Bearer ${token}` },
+			headers: { Authorization: `Bearer ${token} `},
 		});
 		const idx = posts.findIndex((p) => p.id === postId);
 		if (idx !== -1) {
@@ -69,51 +71,19 @@ useEffect(() => {
 		<>
 			{login ? (
 				<div className="grid grid-cols-3 h-screen w-screen-100">
-					<div className="mt-10">
-						<Story></Story>
-					</div>
+					<div className="mt-10"></div>
 					{Loading ? (
-						<>
-							<div className="skeleton h-65 flex justify-center items-center w-full bg-teal-50">
-								<div className="flex w-11/12 flex-col gap-3 ">
-									<div className="flex items-center gap-2">
-										<div className="skeleton h-16 w-16 shrink-0 rounded-full"></div>
-										<div className="flex flex-col gap-2">
-											<div className="skeleton h-2 w-25"></div>
-											<div className="skeleton h-2 w-28"></div>
-											<div className="skeleton h-2 w-28"></div>
-										</div>
-									</div>
-									<div className="flex flex-col gap-1 w-full">
-										<div className="skeleton h-2"></div>
-										<div className="skeleton h-2"></div>
-									</div>
-									<div className="skeleton h-32 w-full"></div>
-								</div>
-							</div>
-						</>
+						<div className="flex flex-col">
+							{[1, 2, 3].map((n) => (
+								<PostSkeleton key={n} />
+							))}
+						</div>
 					) : (
 						<div className="mt-10">
-							<div className="flex join justify-center">
-								<button
-									className={`w-1/2 rounded-l-2xl btn bg-teal-50 btn-active active:bg-teal-600  join-item ${
-										activeBlog === "Posts"
-											? "btn-active bg-teal-600 text-white"
-											: "bg-teal-50 hover:bg-teal-200"
-									}`}
-									onClick={() => setActiveBlog("Posts")}>
-									Posts
-								</button>
-								<button
-									className={`w-1/2 rounded-r-2xl btn bg-teal-50 btn-active active:bg-teal-600  join-item ${
-										activeBlog === "Articles"
-											? "btn-active bg-teal-600 text-white"
-											: "bg-teal-50 hover:bg-teal-200"
-									}`}
-									onClick={() => setActiveBlog("Articles")}>
-									Articles
-								</button>
-							</div>
+							{[1, 2, 3, 5, 6, 7, 8, 9].map((n) => (
+								<Story key={n} />
+							))}
+
 							<div className="divider divider-end">
 								<button className="btn btn-xs text-xs font-bold bg-teal-50">
 									Sort By{" "}
@@ -146,7 +116,7 @@ useEffect(() => {
 										/>
 									))}
 									<button
-										className="btn btn-circle fixed left-1/2 transform -translate-x-1/2 bottom-8 bg-teal-50 hover:bg-teal-100"
+										className="btn btn-circle fixed left-1/2 absolute left-255 bottom-130 bg-teal-50 hover:bg-teal-100"
 										onClick={handleAdd}>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -177,7 +147,57 @@ useEffect(() => {
 						</div>
 					)}
 
-					<div></div>
+					<div className="flex flex-col relative left-15 h-100 bottom-15 w-80 mt-20 ">
+						<h2 className="card-title text-3xl">Articles</h2>
+						<div className="overflow-scroll w-100 h-100 bg-teal-50">
+							<div className="card bg-base-100 w-96 shadow-sm h-100 bg-teal-50">
+								<figure>
+									<img
+										src="https://miro.medium.com/v2/resize:fit:1100/format:webp/0*3rpD-4OikxmCYusJ"
+										alt="Shoes"
+									/>
+								</figure>
+								<div className="card-body">
+									<h2 className="card-title font-bold">
+										This Is How Tesla Will Die
+									</h2>
+
+									<p>The vultures are circling the tech giant.</p>
+									<div className="card-actions justify-end">
+										<button className="btn bg-teal-600 text-white">
+											Read More
+										</button>
+									</div>
+								</div>
+							</div>
+							<div className="card bg-base-100 w-96 shadow-sm h-100 bg-teal-50">
+								<figure>
+									<img
+										src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfBKCTVF_Q3P8p9hHPaxZlSlr1QCJ_f8fKbg&s"
+										alt="Shoes"
+									/>
+								</figure>
+								<div className="card-body">
+									<h2 className="card-title font-bold">
+										A tariff loophole has expired, ringing alarms across social
+										media
+									</h2>
+
+									<p>
+										Trump’s crackdown on Chinese imports has now ended a key
+										shipping exemption — and millions of Americans will soon
+										feel the impact
+									</p>
+									<div className="card-actions justify-end">
+										<button className="btn bg-teal-600 text-white">
+											Read More
+										</button>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
 				</div>
 			) : (
 				<>
